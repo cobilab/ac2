@@ -19,12 +19,12 @@ void ModelsExplanation(void){
   "                         deep contexts), under the estimator <e>, using\n"
   "                         <a> for gamma (decayment forgetting factor)   \n"
   "                         [0;1) (tolerant model),                       \n");
-  } 
+  }
 
 void PrintMenuD(void){
   fprintf(stderr,
-  "Usage: AD [OPTION]... -r [FILE]  [FILE]:[...]                          \n"
-  "Decompression of amino acid sequences (compressed by AC).              \n"
+  "Usage: AD2 [OPTION]... -r [FILE]  [FILE]:[...]                         \n"
+  "Decompression of amino acid sequences (compressed by AC2).             \n"
   "                                                                       \n"
   "Non-mandatory arguments:                                               \n"
   "                                                                       \n"
@@ -43,13 +43,13 @@ void PrintMenuD(void){
 
 void PrintMenu(void){
   fprintf(stderr,
-  "Usage: AC [OPTION]... -r [FILE]  [FILE]:[...]                          \n"
+  "Usage: AC2 [OPTION]... -r [FILE]  [FILE]:[...]                         \n"
   "Compression of amino acid sequences.                                   \n"
   "                                                                       \n"
   "Non-mandatory arguments:                                               \n"
   "                                                                       \n"
   "  -h                     give this help,                               \n"
-  "  -s                     show AC compression levels,                   \n"
+  "  -s                     show AC2 compression levels,                  \n"
   "  -v                     verbose mode (more information),              \n"
   "  -V                     display version number,                       \n"
   "  -f                     force overwrite of output,                    \n"
@@ -82,9 +82,9 @@ void PrintMenu(void){
 void PrintVersion(void){
   fprintf(stderr,
   "                                                                       \n"
-  "                          ================                             \n"
-  "                          | AC & AD v%u.%u |                        \n"
-  "                          ================                             \n"
+  "                          ====================                         \n"
+  "                          | AC2 & AD2 v%u.%u |                         \n"
+  "                          ====================                         \n"
   "                                                                       \n"
   "   Efficient compression and decompression of Amino Acid sequences.    \n"
   "                                                                       \n"
@@ -94,4 +94,3 @@ void PrintVersion(void){
   "ANY WARRANTY, to the extent permitted by law. Developed and Written by \n"
   "Diogo Pratas, Morteza Hosseini and Armando J. Pinho\n\n", VERSION, RELEASE);
   }
-

@@ -1,5 +1,5 @@
 #============================================================================#
-#              AC & AD 2017-2018 IEETA/DETI, UNIVERSITY OF AVEIRO            #
+#              AC2 & AD2 2017-2018 IEETA/DETI, UNIVERSITY OF AVEIRO          #
 #============================================================================#
 BIN    = .
 CC     = gcc
@@ -9,17 +9,17 @@ CFLAGS = -Ofast -Wall $(CPLP)
 #-----------------------------------------------------------------------------
 LIBS   = -lm
 DEPS   = defs.h
-PROGS  = $(BIN)/AC $(BIN)/AD
+PROGS  = $(BIN)/AC2 $(BIN)/AD2
 OBJS   = mem.o msg.o buffer.o common.o hash.o array.o levels.o alphabet.o \
         arith.o arith_aux.o bitio.o pmodels.o tolerant.o context.o nn.o mix.o
 #-----------------------------------------------------------------------------
 all:
 	$(MAKE) progs
 progs: $(PROGS)
-$(BIN)/AC: ac.c $(DEPS) $(OBJS)
-	$(CC) $(CFLAGS) -o $(BIN)/AC ac.c $(OBJS) $(LIBS)
-$(BIN)/AD: ad.c $(DEPS) $(OBJS)
-	$(CC) $(CFLAGS) -o $(BIN)/AD ad.c $(OBJS) $(LIBS)
+$(BIN)/AC2: ac2.c $(DEPS) $(OBJS)
+	$(CC) $(CFLAGS) -o $(BIN)/AC2 ac2.c $(OBJS) $(LIBS)
+$(BIN)/AD2: ad2.c $(DEPS) $(OBJS)
+	$(CC) $(CFLAGS) -o $(BIN)/AD2 ad2.c $(OBJS) $(LIBS)
 mem.o: mem.c mem.h $(DEPS)
 	$(CC) -c $(CFLAGS) mem.c
 msg.o: msg.c msg.h $(DEPS)

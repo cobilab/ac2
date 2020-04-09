@@ -53,3 +53,7 @@ dkms.conf
 
 # Amino acid sequences
 AminoAcidsCorpus
+
+# BINS
+AC2
+AD2
