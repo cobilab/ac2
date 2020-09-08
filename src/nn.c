@@ -52,10 +52,6 @@ void ann_apply(ann_t *ann) {
   const uint32_t hs = ann->hs;
   const uint32_t ys = ann->ys;
 
-  for(i = 0; i < hs; ++i) {
-    ann->h[i] = 0;
-  }
-
   float *w1 = ann->wxh;
   for(i = 0; i < xs; ++i) {
     const float xi = ann->x[i];
@@ -64,20 +60,13 @@ void ann_apply(ann_t *ann) {
     }
   }
 
-  for(i = 0; i < hs; ++i) {
-    ann->h[i] = sig(ann->h[i]);
-  }
-
-  for(i = 0; i < ys; ++i) {
-    ann->y[i] = 0;
-  }
-
   float *w2 = ann->why;
   for(i = 0; i < hs; ++i) {
-    const float hi = ann->h[i];
+    const float hi = sig(ann->h[i]);
     for(j = 0; j < ys; ++j) {
       ann->y[j] += *w2++ * hi;
     }
+    ann->h[i] = hi;
   }
 
   for(i = 0; i < ys; ++i) {
@@ -105,17 +94,20 @@ void ann_train(ann_t *ann, float *t, float learning_rate) {
       d2[i] += *w2 * d1[j];
       *w2++ += learning_rate * hi * d1[j];
     }
-    d2[i] = hi * (1 - hi) * d2[i];
+    ann->h[i] = 0;
+    d2[i] *= hi * (1 - hi);
   }
 
   for(i = 0; i < ys; ++i) {
     *w2++ += learning_rate * d1[i];
+    ann->y[i] = 0;
   }
 
   float *w1 = ann->wxh;
   for(i = 0; i < xs; ++i) {
+    const float xi = ann->x[i];
     for(j = 0; j < hs; ++j) {
-      *w1++ += learning_rate * ann->x[i] * d2[j];
+      *w1++ += learning_rate * xi * d2[j];
     }
   }
 }
