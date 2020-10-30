@@ -22,6 +22,8 @@
 //////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - - - - D E C O M P R E S S O R - - - - - - - - - - - -
 
+
+uint64_t garbage;
 void Decompress(Parameters *P, CModel **cModels, uint8_t id){
   FILE        *Reader  = Fopen(P->tar[id], "r");
   char        *name    = ReplaceSubStr(P->tar[id], ".co", ".de");
@@ -130,8 +132,9 @@ void Decompress(Parameters *P, CModel **cModels, uint8_t id){
   long *sums = calloc(totModels, sizeof(long));
 
   mix_state_t *mxs = mix_init(nmodels, alphabet_size, hs);
-  uint64_t counter = 0;
-  const uint64_t maxcounter = 500000;
+  
+  double expacbits = 0;
+  double expac2bits = 0;
 
   i = 0;
   while(nSymbols--){
@@ -163,14 +166,13 @@ void Decompress(Parameters *P, CModel **cModels, uint8_t id){
     }
 
     for(j = 0 ; j < alphabet_size ; ++j) {
-      probs[totModels][j] = PT->freqs[j];
+      probs[totModels][j] = PT->freqs[j] * 2;
     }
 
     const float* y = mix(mxs, probs);
 
-    float max1 = 0;
-    float max2 = 0;
     float yn[alphabet_size];
+    float acmix[alphabet_size];
     float sum = 0;
     for(n = 0 ; n < alphabet_size ; ++n) {
       sum += y[n];
@@ -178,27 +180,12 @@ void Decompress(Parameters *P, CModel **cModels, uint8_t id){
 
     for(n = 0 ; n < alphabet_size ; ++n) {
       yn[n] = y[n] / sum;
+      acmix[n] = PT->freqs[n];
     }
-
-    for(n = 0 ; n < alphabet_size ; ++n) {
-      if(PT->freqs[n] > max1) {
-        max1 = PT->freqs[n];
-      }
-      if(yn[n] > max2) {
-        max2 = yn[n];
-      }
-    }
-
-    if(counter < maxcounter) {
-      counter++;
-      if(max1 < max2) {
-        for(n = 0 ; n < alphabet_size ; ++n) {
-          PT->freqs[n] = y[n];
-        }
-      }
-    } else {
+    
+    if(expacbits > expac2bits) {
       for(n = 0 ; n < alphabet_size ; ++n) {
-        PT->freqs[n] = y[n];
+	PT->freqs[n] = y[n];
       }
     }
 
@@ -210,6 +197,16 @@ void Decompress(Parameters *P, CModel **cModels, uint8_t id){
 
     mix_update_state(mxs, probs, sym, lr);
 
+    
+    const double a = 0.999;
+    const double na = 1 - a;
+
+    double acbits = -log2(acmix[sym]);
+    double ac2bits = -log2(yn[sym]);
+    
+    expacbits = (na * acbits) + (a * expacbits);
+    expac2bits = (na * ac2bits) + (a * expac2bits);
+    
     for(n = 0 ; n < P[id].nModels ; ++n)
       if(cModels[n]->edits != 0){
         cModels[n]->TM->seq->buf[cModels[n]->TM->seq->idx] = sym;

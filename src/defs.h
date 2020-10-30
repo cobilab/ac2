@@ -53,8 +53,6 @@ typedef struct{
   }
 Parameters;
 
-uint64_t garbage;
-
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #define RELEASE                1
