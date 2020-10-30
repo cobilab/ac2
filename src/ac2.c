@@ -182,8 +182,8 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
       }
     }
   }
-
-  // pre train
+  // pre train freqs not available in decompressor?
+  /*
   uint64_t tcount = 0;
   for(j = 0 ; j < ALPHABET_MAX_SIZE ; ++j) {
     tcount += AL->counts[j];
@@ -211,9 +211,7 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
     mix(mxs, probs);
     ann_train(mxs->ann, tdata, 1);
   }
-  
-  
-  
+  */
   i = 0;
   while((k = fread(readerBuffer, 1, BUFFER_SIZE, Reader)))
     for(idxPos = 0 ; idxPos < k ; ++idxPos){
