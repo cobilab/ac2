@@ -166,6 +166,53 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
   
   double expacbits = 0;
   double expac2bits = 0;
+
+  // pre train
+  for(i = 0; i < 1000; ++i) {  
+    for(j = 0 ; j < alphabet_size ; ++j) {
+      for(n = 0; n < nmodels; ++n) {
+	probs[n][j] = 1.0;
+      }
+      mix(mxs, probs);
+      mix_update_state(mxs, probs, j, 1);
+      for(n = 0; n < nmodels; ++n) {
+	for(k = 0 ; k < alphabet_size ; ++k) {
+	  probs[n][k] = 0;
+	}
+      }
+    }
+  }
+
+  // pre train
+  uint64_t tcount = 0;
+  for(j = 0 ; j < ALPHABET_MAX_SIZE ; ++j) {
+    tcount += AL->counts[j];
+  }
+  float fr[alphabet_size];
+  i = 0;
+  for(j = 0 ; j < ALPHABET_MAX_SIZE ; ++j) {
+    if(AL->counts[j] > 0) {
+      fr[i] = (float)AL->counts[j] / tcount;
+      i++;
+    }
+  }
+  for(n = 0; n < nmodels; ++n) {
+    for(k = 0 ; k < alphabet_size ; ++k) {
+      probs[n][k] = 0;
+    }
+  }
+
+  float tdata[mxs->nsymbols];
+  for(j = 0 ; j < mxs->nsymbols; ++j) {
+    tdata[j] = fr[j];
+  }
+  
+  for(i = 0; i < 1000; ++i) {
+    mix(mxs, probs);
+    ann_train(mxs->ann, tdata, 1);
+  }
+  
+  
   
   i = 0;
   while((k = fread(readerBuffer, 1, BUFFER_SIZE, Reader)))
