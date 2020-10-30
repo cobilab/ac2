@@ -1,11 +1,11 @@
 #!/bin/bash
 ###############################################################################
-INSTALL_NAF=1;
-INSTALL_BBB=1;
-INSTALL_CMIX=1;
-INSTALL_LZMA=1;
-INSTALL_AC=1;
-INSTALL_AC2=1;
+INSTALL_NAF=0;
+INSTALL_BBB=0;
+INSTALL_CMIX=0;
+INSTALL_LZMA=0;
+INSTALL_AC=0;
+INSTALL_AC2=0;
 ###############################################################################
 DOWNLOAD=0;
 ###############################################################################
@@ -14,7 +14,7 @@ RUN_BBB=0;
 RUN_CMIX=0;
 RUN_LZMA=0;
 RUN_AC=0;
-RUN_AC2=0;
+RUN_AC2=1;
 #
 function RunAC {
    # 1 - params
@@ -68,7 +68,7 @@ function RunBBB {
 if test -f "../../ds/$1"; then
    cp ../../ds/$1 .
    rm -f $1.bbb
-   (/usr/bin/time -v ./bbb cfm2000q $1 $1.bbb ) &> ../../res/C_BBB_$1
+   (/usr/bin/time -v ./bbb cfm100q $1 $1.bbb ) &> ../../res/C_BBB_$1
    ls -la $1.bbb | awk '{ print $5;}' > ../../res/BC_BBB_$1
    rm -f $1 $1.bbb;
 fi
@@ -196,7 +196,10 @@ if [[ "$RUN_CMIX" -eq "1" ]]; then
    RunCMIX  "SC"
    RunCMIX  "HS"
    RunCMIX  "BT"
-
+   
+   RunCMIX  "pdbaa"
+   RunCMIX  "GRCh38"
+   RunCMIX  "uniprot"
    #
    cd ../../
    echo "Done!";
@@ -207,7 +210,7 @@ if [[ "$RUN_LZMA" -eq "1" ]]; then
    echo "Running LZMA ...";
    mkdir -p res
    cd progs/lzma
-   
+  
    RunLZMA  "EP"
    RunLZMA  "XV"
    RunLZMA  "FV"
@@ -224,6 +227,11 @@ if [[ "$RUN_LZMA" -eq "1" ]]; then
    RunLZMA  "SC"
    RunLZMA  "HS"
    RunLZMA  "BT"
+   
+   RunLZMA  "uniprot"
+   RunLZMA  "GRCh38"
+   RunLZMA  "pdbaa"
+
 
    #
    cd ../../
@@ -235,6 +243,7 @@ if [[ "$RUN_BBB" -eq "1" ]]; then
    mkdir -p res
    cd progs/bbb
    
+
    RunBBB  "EP"
    RunBBB  "XV"
    RunBBB  "FV"
@@ -252,6 +261,10 @@ if [[ "$RUN_BBB" -eq "1" ]]; then
    RunBBB  "HS"
    RunBBB  "BT"
 
+   RunBBB  "uniprot"
+   RunBBB  "GRCh38"
+   RunBBB  "pdbaa"
+
    #
    cd ../../
    echo "Done!";
@@ -262,6 +275,7 @@ if [[ "$RUN_NAF" -eq "1" ]]; then
    echo "Running NAF ...";
    mkdir -p res
    cd progs/naf
+
 
    RunNAF  "EP"
    RunNAF  "XV"
@@ -280,6 +294,9 @@ if [[ "$RUN_NAF" -eq "1" ]]; then
    RunNAF  "HS"
    RunNAF  "BT"
 
+   RunNAF  "uniprot"
+   RunNAF  "GRCh38"
+   RunNAF  "pdbaa"
    #
    cd ../../
    echo "Done!";
@@ -310,6 +327,9 @@ if [[ "$RUN_AC" -eq "1" ]]; then
    RunAC  "-l 7 -lr 0.17 -hs 64" "HS"
    RunAC  "-l 7 -lr 0.16 -hs 64" "BT"
 
+   RunAC  "-l 7 -lr 0.16 -hs 64" "GRCh38"
+   RunAC  "-l 7 -lr 0.16 -hs 64" "pdbaa"
+   RunAC  "-l 5 -lr 0.16 -hs 64" "uniprot"
    #
    cd ../../
    echo "Done!";
@@ -337,6 +357,31 @@ if [[ "$RUN_AC2" -eq "1" ]]; then
    RunAC2  "-l 6 -lr 0.17 -hs 64" "SC"
    RunAC2  "-l 7 -lr 0.17 -hs 64" "HS"
    RunAC2  "-l 7 -lr 0.16 -hs 64" "BT"
+
+   RunAC2  "-l 7 -lr 0.16 -hs 64" "GRCh38"
+   RunAC2  "-l 7 -lr 0.16 -hs 64" "pdbaa"
+   RunAC2  "-l 5 -lr 0.16 -hs 64" "uniprot"
+
+   #RunAC2  "-l 1 -lr 0.16 -hs 16" "EP"
+   #RunAC2  "-l 1 -lr 0.16 -hs 16" "XV"
+   #RunAC2  "-l 2 -lr 0.16 -hs 24" "FV"
+   #RunAC2  "-l 7 -lr 0.16 -hs 48" "FM"
+   #RunAC2  "-l 2 -lr 0.16 -hs 24" "HA"
+   #RunAC2  "-l 5 -lr 0.16 -hs 40" "AP"
+   #RunAC2  "-l 4 -lr 0.16 -hs 40" "DA"
+   #RunAC2  "-l 4 -lr 0.16 -hs 40" "MJ"
+   #RunAC2  "-l 4 -lr 0.16 -hs 40" "HI"
+   #RunAC2  "-l 5 -lr 0.16 -hs 48" "SA"
+   #RunAC2  "-l 5 -lr 0.16 -hs 64" "LC"
+   #RunAC2  "-l 5 -lr 0.16 -hs 64" "EC"
+   #RunAC2  "-l 7 -lr 0.16 -hs 64" "HT"
+   #RunAC2  "-l 6 -lr 0.16 -hs 64" "SC"
+   #RunAC2  "-l 7 -lr 0.16 -hs 64" "HS"
+   #RunAC2  "-l 7 -lr 0.16 -hs 64" "BT"
+
+   #RunAC2  "-l 7 -lr 0.16 -hs 64" "GRCh38"
+   #RunAC2  "-l 7 -lr 0.16 -hs 64" "pdbaa"
+   #RunAC2  "-l 5 -lr 0.16 -hs 64" "uniprot"
 
    #
    cd ../../
