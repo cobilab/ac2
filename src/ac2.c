@@ -30,7 +30,7 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
   FILE        *Writter = Fopen(name, "w");
   uint32_t    j, n, k, x, cModel, totModels, idxPos;
   uint64_t    i, size = 0;
-  uint8_t     *readerBuffer, sym, *pos;
+  uint8_t     *readerBuffer, sym, symRev, *pos, amino_acid;
   double      se = 0;
   PModel      **pModel, *MX;
   FloatPModel *PT;
@@ -59,7 +59,7 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
     PrintAlphabet(AL);
 
   // ADAPT ALPHABET FOR NON FREQUENT SYMBOLS
-  AdaptAlphabetNonFrequent(AL, Reader);
+  //AdaptAlphabetNonFrequent(AL, Reader);
 
   // EXTRA MODELS DERIVED FROM EDITS
   totModels = P->nModels;
@@ -80,9 +80,9 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
 
   for(n = 0 ; n < P->nModels ; ++n)
     if(P->model[n].type == TARGET){
-      cModels[n] = CreateCModel(P->model[n].ctx, P->model[n].den, TARGET,
-      P->model[n].edits, P->model[n].eDen, AL->cardinality, P->model[n].gamma,
-      P->model[n].eGamma);
+      cModels[n] = CreateCModel(P->model[n].ctx, P->model[n].den, TARGET, 
+      P->model[n].code, P->model[n].edits, P->model[n].eDen, AL->cardinality, 
+      P->model[n].gamma, P->model[n].eGamma);
       }
 
   if(P->verbose){
@@ -117,6 +117,7 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
     WriteNBits(cModels[n]->ctx,                         CTX_BITS, Writter);
     WriteNBits(cModels[n]->alphaDen,              ALPHA_DEN_BITS, Writter);
     WriteNBits((int)(cModels[n]->gamma * 65534),      GAMMA_BITS, Writter);
+    WriteNBits(cModels[n]->code,                       CODE_BITS, Writter);
     WriteNBits(cModels[n]->edits,                     EDITS_BITS, Writter);
     if(cModels[n]->edits != 0){
       WriteNBits((int)(cModels[n]->eGamma * 65534), E_GAMMA_BITS, Writter);
@@ -174,7 +175,9 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
 
       CalcProgress(size, ++i);
 
-      symBuf->buf[symBuf->idx] = sym = AL->revMap[ readerBuffer[idxPos] ];
+      amino_acid = readerBuffer[idxPos];
+      symBuf->buf[symBuf->idx] = sym = AL->revMap[amino_acid];
+
       memset((void *)PT->freqs, 0, AL->cardinality * sizeof(double));
 
       n = 0;
@@ -256,8 +259,26 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
       CalcDecayment(WM, pModel, sym);
 
       for(n = 0 ; n < P->nModels ; ++n)
-        if(cModels[n]->ref == TARGET)
-          UpdateCModelCounter(cModels[n], sym, cModels[n]->pModelIdx);
+        if(cModels[n]->ref == TARGET){
+          switch(cModels[n]->code)
+            {
+            case 0:
+	    UpdateCModelCounter(cModels[n], sym, cModels[n]->pModelIdx);
+            break;
+            case 1:
+	    UpdateCModelCounter(cModels[n], sym, cModels[n]->pModelIdx);
+	    symRev = GetPModelIdxRev(symBuf->buf+symBuf->idx, cModels[n], AL);
+            UpdateCModelCounter(cModels[n], symRev, cModels[n]->pModelIdxRev);
+            break;
+            case 2:
+	    symRev = GetPModelIdxRev(symBuf->buf+symBuf->idx, cModels[n], AL);
+            UpdateCModelCounter(cModels[n], symRev, cModels[n]->pModelIdxRev);
+            break;
+            default:
+	    UpdateCModelCounter(cModels[n], sym, cModels[n]->pModelIdx);
+            break;
+            }
+	  }
 
       RenormalizeWeights(WM);
 
@@ -283,7 +304,7 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
     Free(IAEName);
     }
   #endif
-
+  /*
   RemovePModel(MX);
   Free(name);
   for(n = 0 ; n < P->nModels ; ++n)
@@ -301,9 +322,12 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
   RemoveFPModel(PT);
   Free(readerBuffer);
   RemoveCBuffer(symBuf);
+  */
   int card = AL->cardinality;
+  /*
   RemoveAlphabet(AL);
   RemoveWeightModel(WM);
+  */
   fclose(Reader);
 
   if(P->verbose == 1)
@@ -333,7 +357,7 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
 // - - - - - - - - - - - - - - - - R E F E R E N C E - - - - - - - - - - - - -
 
 CModel **LoadReference(Parameters *P){
-  FILE      *Reader = Fopen(P->ref, "r");
+  /*  FILE      *Reader = Fopen(P->ref, "r");
   uint32_t  n, k, idxPos;
   uint64_t  nSymbols = 0;
   uint8_t   *readerBuffer, sym;
@@ -395,8 +419,8 @@ CModel **LoadReference(Parameters *P){
     fprintf(stdout, "Done!                          \n");  // SPACES ARE VALID
   else
     fprintf(stdout, "                               \n");  // SPACES ARE VALID
-
-  return cModels;
+  */
+  return NULL;
   }
 
 //////////////////////////////////////////////////////////////////////////////

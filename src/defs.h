@@ -27,6 +27,7 @@ typedef int8_t   I8;
 typedef struct{
   U32    ctx;
   U32    den;
+  U32    code;
   double gamma;
   double eGamma;
   U32    edits;
@@ -74,6 +75,7 @@ Parameters;
 #define CTX_BITS               5
 #define ALPHA_DEN_BITS         11
 #define GAMMA_BITS             16
+#define CODE_BITS              8
 #define EDITS_BITS             6
 #define E_GAMMA_BITS           16
 #define E_DEN_BITS             9

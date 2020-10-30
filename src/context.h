@@ -7,6 +7,7 @@
 #include "array.h"
 #include "pmodels.h"
 #include "tolerant.h"
+#include "alphabet.h"
 
 #define ARRAY_MODE            0
 #define HASH_TABLE_MODE       1
@@ -24,7 +25,9 @@ typedef struct{
   TOLERANT   *TM;
   double     gamma;
   double     eGamma;
+  U32        code;
   U64        pModelIdx;     // IDX
+  U64        pModelIdxRev;  // IDX Rev
   U32        edits;         // EDITS
   U32        nSym;          // EDITS
   }
@@ -33,10 +36,12 @@ CModel;
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 void            GetPModelIdx         (U8 *, CModel *);
+uint8_t         GetPModelIdxRev      (U8 *, CModel *, ALPHABET *);
 uint64_t        GetPModelIdxCorr     (U8 *, CModel *, uint64_t);
 void            ResetCModelIdx       (CModel *);
+void            ResetCModelIdxRev    (CModel *);
 void            UpdateCModelCounter  (CModel *, U32, U64);
-CModel          *CreateCModel        (U32, U32, U8, U32, U32, U32, double, double);
+CModel          *CreateCModel        (U32, U32, U8, U32, U32, U32, U32, double, double);
 void            ComputePModel        (CModel *, PModel *, uint64_t, uint32_t, long*, long*);
 void            RemoveCModel         (CModel *);
 double          PModelSymbolNats     (PModel *, U32);

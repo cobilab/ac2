@@ -7,30 +7,31 @@
 #include "mem.h"
 #include "common.h"
 #include "context.h"
+#include "translate.h"
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-CModel *CreateCModel(U32 ctx, U32 aDen, U8 ref, U32 edits, U32 eDen, U32 nSym,
-double gamma, double eGamma){
+CModel *CreateCModel(U32 ctx, U32 aDen, U8 ref, U32 code, U32 edits, U32 eDen, 
+U32 nSym, double gamma, double eGamma){
   CModel *M = (CModel *) Calloc(1, sizeof(CModel));
   U64    prod = 1, *mult;
   U32    n;
   double tmp;
 
-  M->nSym        = nSym;
-  mult           = (U64 *) Calloc(ctx, sizeof(U64));
-  tmp            = pow(M->nSym, ctx);
-  M->nPModels    = (U64) tmp;
-  //M->nPModels  = (U64) pow(M->nSym, ctx);
-  M->ctx         = ctx;
-  M->alphaDen    = aDen;
-  M->edits       = edits;
-  M->gamma       = gamma;
-  M->eGamma      = eGamma;
-  M->pModelIdx   = 0;
-  M->ref         = ref == 0 ? 0 : 1;
+  M->nSym         = nSym;
+  mult            = (U64 *) Calloc(ctx, sizeof(U64));
+  tmp             = pow(M->nSym, ctx);
+  M->nPModels     = (U64) tmp;
+  M->ctx          = ctx;
+  M->alphaDen     = aDen;
+  M->code         = code;
+  M->edits        = edits;
+  M->gamma        = gamma;
+  M->eGamma       = eGamma;
+  M->pModelIdx    = 0;
+  M->pModelIdxRev = 0;
+  M->ref          = ref == 0 ? 0 : 1;
 
-  //if((ULL)(M->nPModels) * M->nSym * sizeof(ACC) >> 20 > MAX_ARRAY_MEMORY || tmp > UINT64_MAX){
   if(tmp * (double)M->nSym * (double)sizeof(ACC) / pow(2,20) > MAX_ARRAY_MEMORY || tmp >= UINT64_MAX){
     M->mode = HASH_TABLE_MODE;
     M->HT   = CreateHashTable(M->nSym);
@@ -63,8 +64,23 @@ void ResetCModelIdx(CModel *M){
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+void ResetCModelIdxRev(CModel *M){
+  M->pModelIdxRev = 0;
+  }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 void GetPModelIdx(U8 *p, CModel *M){
   M->pModelIdx = ((M->pModelIdx-*(p-M->ctx)*M->multiplier)*M->nSym)+*p;
+  }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+uint8_t GetPModelIdxRev(U8 *p, CModel *M, ALPHABET *A){
+  M->pModelIdxRev = (M->pModelIdxRev/M->nSym)+
+	             A->revMap[InvRevAmAcid(1, A->toChars[*p])]*
+		     M->multiplier;
+  return A->revMap[InvRevAmAcid(1, A->toChars[*(p-M->ctx)])];
   }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

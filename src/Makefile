@@ -8,18 +8,18 @@ CPLP   =
 CFLAGS = -Wall -O3 -march=native -flto $(CPLP)
 #-----------------------------------------------------------------------------
 LIBS   = -lm
-DEPS   = defs.h
-PROGS  = $(BIN)/AC2 $(BIN)/AD2
+DEPS   = defs.h translate.h
+PROGS  = $(BIN)/AC2
 OBJS   = mem.o msg.o buffer.o common.o hash.o array.o levels.o alphabet.o \
-        arith.o arith_aux.o bitio.o pmodels.o tolerant.o context.o nn.o mix.o
+        arith.o arith_aux.o bitio.o pmodels.o translate.o tolerant.o context.o nn.o mix.o
 #-----------------------------------------------------------------------------
 all:
 	$(MAKE) progs
 progs: $(PROGS)
 $(BIN)/AC2: ac2.c $(DEPS) $(OBJS)
 	$(CC) $(CFLAGS) -o $(BIN)/AC2 ac2.c $(OBJS) $(LIBS)
-$(BIN)/AD2: ad2.c $(DEPS) $(OBJS)
-	$(CC) $(CFLAGS) -o $(BIN)/AD2 ad2.c $(OBJS) $(LIBS)
+#$(BIN)/AD2: ad2.c $(DEPS) $(OBJS)
+#	$(CC) $(CFLAGS) -o $(BIN)/AD2 ad2.c $(OBJS) $(LIBS)
 mem.o: mem.c mem.h $(DEPS)
 	$(CC) -c $(CFLAGS) mem.c
 msg.o: msg.c msg.h $(DEPS)
@@ -48,6 +48,8 @@ tolerant.o: tolerant.c tolerant.h $(DEPS)
 	$(CC) -c $(CFLAGS) tolerant.c
 context.o: context.c context.h $(DEPS)
 	$(CC) -c $(CFLAGS) context.c
+translate.o: translate.c translate.h $(DEPS)
+	$(CC) -c $(CFLAGS) translate.c
 nn.o: nn.c nn.h
 	$(CC) -c $(CFLAGS) nn.c
 mix.o: mix.c mix.h $(DEPS)

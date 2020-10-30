@@ -404,15 +404,15 @@ char *ArgsString(char *def, char *arg[], uint32_t n, char *str)
 
 ModelPar ArgsUniqModel(char *str, uint8_t type)
   {
-  uint32_t  ctx, den, edits, eDen;
+  uint32_t  ctx, den, edits, eDen, code;
   double    gamma, eGamma;
   ModelPar  Mp;
 
-  if(sscanf(str, "%u:%u:%lf/%u:%u:%lf", &ctx, &den, &gamma, &edits, &eDen, 
-  &eGamma ) == 6){
+  if(sscanf(str, "%u:%u:%lf:%u/%u:%u:%lf", &ctx, &den, &gamma, &code, &edits, 
+  &eDen, &eGamma ) == 7){
     if(ctx > MAX_CTX || ctx < MIN_CTX || den > MAX_DEN || den < MIN_DEN || 
-    gamma >= 1.0 || gamma < 0.0 || eGamma >= 1.0 || eGamma < 0.0 ||edits > 256 
-    || eDen > 50000){
+    gamma >= 1.0 || gamma < 0.0 || code > 17 || eGamma >= 1.0 || eGamma < 0.0 ||
+    edits > 256 || eDen > 50000){
       fprintf(stderr, "Error: invalid model arguments range!\n");
       ModelsExplanation();
       fprintf(stderr, "\nPlease reset the models according to the above " 
@@ -421,6 +421,7 @@ ModelPar ArgsUniqModel(char *str, uint8_t type)
       }
     Mp.ctx    = ctx;
     Mp.den    = den;
+    Mp.code   = code;
     Mp.gamma  = ((int)(gamma * 65534)) / 65534.0;
     Mp.eGamma = ((int)(eGamma * 65534)) / 65534.0;
     Mp.edits  = edits;
@@ -559,6 +560,8 @@ void PrintArgs(Parameters *P)
       P->model[n].den);
       fprintf(stderr, "  [+] Gamma ........................ %.2lf\n", 
       P->model[n].gamma);
+      fprintf(stderr, "  [+] Code ......................... %u\n",
+      P->model[n].code);
       fprintf(stderr, "  [+] Allowable substitutions ...... %u\n",
       P->model[n].edits);
       if(P->model[n].edits != 0){
@@ -579,6 +582,8 @@ void PrintArgs(Parameters *P)
       P->model[n].den);
       fprintf(stderr, "  [+] Gamma ........................ %.2lf\n", 
       P->model[n].gamma);
+      fprintf(stderr, "  [+] Code ......................... %u\n",
+      P->model[n].code);
       fprintf(stderr, "  [+] Allowable substitutions ...... %u\n",
       P->model[n].edits);
       if(P->model[n].edits != 0){
