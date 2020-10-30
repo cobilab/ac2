@@ -19,7 +19,6 @@
 #include "arith.h"
 #include "arith_aux.h"
 #include "mix.h"
-#include "translate.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - - - - C O M P R E S S O R - - - - - - - - - - - - - -
