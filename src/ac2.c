@@ -19,6 +19,7 @@
 #include "arith.h"
 #include "arith_aux.h"
 #include "mix.h"
+#include "translate.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - - - - C O M P R E S S O R - - - - - - - - - - - - - -
@@ -54,7 +55,8 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
   // BUILD ALPHABET
   ALPHABET *AL = CreateAlphabet(P->low);
   LoadAlphabet(AL, Reader);
-  PrintAlphabet(AL);
+  if(P->verbose)
+    PrintAlphabet(AL);
 
   // ADAPT ALPHABET FOR NON FREQUENT SYMBOLS
   AdaptAlphabetNonFrequent(AL, Reader);

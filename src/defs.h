@@ -53,6 +53,8 @@ typedef struct{
   }
 Parameters;
 
+
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #define RELEASE                1
@@ -100,7 +102,8 @@ Parameters;
 #define MAX_DEN                1000000
 #define MIN_DEN                1
 #define BGUARD                 32
-#define DEFAULT_MAX_COUNT      ((1 << (sizeof(ACC) * 8)) - 1)
+//#define DEFAULT_MAX_COUNT    ((1 << (sizeof(ACC) * 8)) - 1)
+#define DEFAULT_MAX_COUNT      4096
 #define CHECKSUMGF             255
 #define WATERMARK              120
 #define MAX_HISTORYSIZE        1000000

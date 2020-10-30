@@ -3,7 +3,7 @@
 
 #include "defs.h"
 
-typedef uint16_t ACC; // Size of context counters for arrays
+typedef uint8_t ACC; // Size of context counters for arrays
 
 #define MAX_ARRAY_COUNTER ((1<<(sizeof(ACC)*8))-1)
 
