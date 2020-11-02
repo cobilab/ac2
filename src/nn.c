@@ -92,9 +92,9 @@ void ann_apply(ann_t *ann) {
 }
 
 
-const float b1 = 0.9;
+const float b1 = 0.99;
 const float nb1 = 1 - b1;
-const float b2 = 0.999;
+const float b2 = 0.9999;
 const float nb2 = 1 - b2;
 const float eps = 1E-8;
 
