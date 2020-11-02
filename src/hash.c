@@ -61,7 +61,7 @@ void UpdateHashCounter(HASH *H, uint32_t sym, uint64_t im){
 
   for(x = 0 ; x < H->entrySize[hIndex] ; ++x)
     if(H->entries[hIndex][x].key == idx){
-      if(++H->entries[hIndex][x].counters[sym] == MAX_HASH_COUNTER) 
+      if(++H->entries[hIndex][x].counters[sym] == 3 /*MAX_HASH_COUNTER*/) 
         for(s = 0 ; s < H->nSym ; ++s)
           H->entries[hIndex][x].counters[s] /= 2;
       return;
