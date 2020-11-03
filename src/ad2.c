@@ -144,7 +144,7 @@ void Decompress(Parameters *P, CModel **cModels, uint8_t id){
 	probs[n][j] = 1.0;
       }
       mix(mxs, probs);
-      mix_update_state(mxs, probs, j, 1);
+      mix_update_state(mxs, probs, j, 0.0001);
       for(n = 0; n < nmodels; ++n) {
 	for(k = 0 ; k < alphabet_size ; ++k) {
 	  probs[n][k] = 0;
