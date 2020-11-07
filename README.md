@@ -1,4 +1,4 @@
-#AC2
+AC2
 ====
 AC2 is an amino acid compressor that uses a neural network to do the mixing of experts.
 
