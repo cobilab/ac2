@@ -38,7 +38,7 @@ void PrintMenuD(void){
   "  <FILE>                file to uncompress (last argument). For        \n"
   "                        more files use splitting \":\" characters.     \n"
   "                                                                       \n"
-  "Report bugs to <{pratas,seyedmorteza,ap}@ua.pt>.                       \n");
+  "Report bugs to <{teixeirasilva,pratas,ap}@ua.pt>.                       \n");
   }
 
 void PrintMenu(void){
@@ -72,10 +72,10 @@ void PrintMenu(void){
   "                                                                       \n"
   "Example:                                                               \n"
   "                                                                       \n"
-  "  [Compress]   ./AC -v -tm 1:1:0.8/0:0:0 -tm 5:20:0.9/3:20:0.9 seq.txt \n"
-  "  [Decompress] ./AD -v seq.txt.co                                      \n"
+  "  [Compress]   ./AC2 -v -l 7 -lr 0.16 -hs 80 seq.txt                   \n"
+  "  [Decompress] ./AD2 -v seq.txt.co                                     \n"
   "                                                                       \n"
-  "Report bugs to <{pratas,seyedmorteza,ap}@ua.pt>.                       \n");
+  "Report bugs to <{teixeirasilva,pratas,ap}@ua.pt>.                      \n");
   }
 
 
@@ -88,9 +88,9 @@ void PrintVersion(void){
   "                                                                       \n"
   "   Efficient compression and decompression of Amino Acid sequences.    \n"
   "                                                                       \n"
-  "Copyright (C) 2017-2018 University of Aveiro. This is a Free software. \n"
+  "Copyright (C) 2017-2020 University of Aveiro. This is a Free software. \n"
   "You may redistribute copies of it under the terms of the GNU - General \n"
   "Public License v3 <http://www.gnu.org/licenses/gpl.html>. There is NOT \n"
   "ANY WARRANTY, to the extent permitted by law. Developed and Written by \n"
-  "Diogo Pratas, Morteza Hosseini and Armando J. Pinho\n\n", VERSION, RELEASE);
+  "Milton Silva, Diogo Pratas, and Armando J. Pinho\n\n", VERSION, RELEASE);
   }
