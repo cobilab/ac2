@@ -5,7 +5,7 @@
 
 typedef uint8_t ACC; // Size of context counters for arrays
 
-#define MAX_ARRAY_COUNTER ((1<<(sizeof(ACC)*8))-1)
+#define MAX_ARRAY_COUNTER 64 // ((1<<(sizeof(ACC)*8))-1)
 
 typedef struct{
   ACC        *counters;

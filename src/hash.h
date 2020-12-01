@@ -7,7 +7,7 @@ typedef uint8_t HCC;         // Size of context counters for hash tables
 //typedef uint16_t ENTMAX;     // Entry size (nKeys for each hIndex)
 typedef uint8_t ENTMAX;     // Entry size (nKeys for each hIndex)
 
-#define MAX_HASH_COUNTER ((1<<(sizeof(HCC)*8))-1)
+#define MAX_HASH_COUNTER 4 // ((1<<(sizeof(HCC)*8))-1)
 
 #define HASH_SIZE 16777259
 
