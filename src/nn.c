@@ -4,7 +4,6 @@
 #include <math.h>
 
 #include "nn.h"
-#include "common.h"
 
 ann_t* ann_init(uint64_t xs, uint64_t hs, uint64_t ys) {
   ann_t *ann = malloc(sizeof(ann_t));
@@ -15,8 +14,7 @@ ann_t* ann_init(uint64_t xs, uint64_t hs, uint64_t ys) {
   ann->x = calloc(xs, sizeof(float));
   ann->h = calloc(hs, sizeof(float));
   ann->y = calloc(ys, sizeof(float));
-
-
+  
   ann->wxh = calloc(xs * hs, sizeof(float));
   ann->why = calloc((hs+1) * ys, sizeof(float));
 
@@ -69,9 +67,33 @@ void ann_apply(ann_t *ann) {
     ann->h[i] = hi;
   }
 
-  for(i = 0; i < ys; ++i) {
-    ann->y[i] = sig(ann->y[i] + *w2++);
+  float maxy = ann->y[0] = ann->y[0] + *w2++;
+  for(i = 1; i < ys; ++i) {
+    ann->y[i] = ann->y[i] + *w2++;
+    maxy = fmaxf(ann->y[i], maxy);
   }
+
+  float total = 0;
+  for(i = 0; i < ys; ++i) {
+    ann->y[i] = fasterexp(ann->y[i] - maxy);
+    total += ann->y[i];
+  }
+
+  for(i = 0; i < ys; ++i) {
+    ann->y[i] /= total;
+  }
+  
+  /*
+  float total = 0;
+  for(i = 0; i < ys; ++i) {
+    ann->y[i] = fasterexp(ann->y[i] + *w2++);
+    total += ann->y[i];
+  }
+  
+  for(i = 0; i < ys; ++i) {
+    ann->y[i] /= total;
+  }
+  */
 }
 
 void ann_train(ann_t *ann, float *t, float learning_rate) {
@@ -82,7 +104,7 @@ void ann_train(ann_t *ann, float *t, float learning_rate) {
 
   float d1[ys];
   for(i = 0; i < ys; ++i) {
-    d1[i] = ann->y[i] * (1 - ann->y[i]) * (t[i] - ann->y[i]);
+    d1[i] = t[i] - ann->y[i];
   }
 
   float *w2 = ann->why;

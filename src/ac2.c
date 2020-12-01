@@ -167,6 +167,7 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
   double expacbits = 0;
   double expac2bits = 0;
 
+  
   // pre train
   for(i = 0; i < 1000; ++i) {  
     for(j = 0 ; j < alphabet_size ; ++j) {
@@ -174,7 +175,7 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
 	probs[n][j] = 1.0;
       }
       mix(mxs, probs);
-      mix_update_state(mxs, probs, j, 1);
+      mix_update_state(mxs, probs, j, 0.4);
       for(n = 0; n < nmodels; ++n) {
 	for(k = 0 ; k < alphabet_size ; ++k) {
 	  probs[n][k] = 0;
