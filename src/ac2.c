@@ -80,8 +80,8 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
   for(n = 0 ; n < P->nModels ; ++n)
     if(P->model[n].type == TARGET){
       cModels[n] = CreateCModel(P->model[n].ctx, P->model[n].den, TARGET,
-      P->model[n].edits, P->model[n].eDen, AL->cardinality, P->model[n].gamma,
-      P->model[n].eGamma);
+      P->model[n].edits, P->model[n].eDen, AL->cardinality, P->model[n].hashSize,
+      P->model[n].gamma, P->model[n].eGamma);
       }
 
   if(P->verbose){
@@ -117,6 +117,7 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
     WriteNBits(cModels[n]->alphaDen,              ALPHA_DEN_BITS, Writter);
     WriteNBits((int)(cModels[n]->gamma * 65534),      GAMMA_BITS, Writter);
     WriteNBits(cModels[n]->edits,                     EDITS_BITS, Writter);
+    WriteNBits(cModels[n]->hashSize,                   HASH_BITS, Writter);
     if(cModels[n]->edits != 0){
       WriteNBits((int)(cModels[n]->eGamma * 65534), E_GAMMA_BITS, Writter);
       WriteNBits(cModels[n]->TM->den,                 E_DEN_BITS, Writter);
@@ -402,8 +403,8 @@ CModel **LoadReference(Parameters *P){
   for(n = 0 ; n < P->nModels ; ++n)
     if(P->model[n].type == REFERENCE)
       cModels[n] = CreateCModel(P->model[n].ctx, P->model[n].den, REFERENCE,
-      P->model[n].edits, P->model[n].eDen, AL->cardinality, P->model[n].gamma,
-      P->model[n].eGamma);
+      P->model[n].edits, P->model[n].eDen, AL->cardinality, P->model[n].hashSize,
+      P->model[n].gamma, P->model[n].eGamma);
 
   nSymbols = NBytesInFile(Reader);
 

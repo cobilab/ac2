@@ -11,7 +11,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 CModel *CreateCModel(U32 ctx, U32 aDen, U8 ref, U32 edits, U32 eDen, U32 nSym,
-double gamma, double eGamma){
+U32 hSize, double gamma, double eGamma){
   CModel *M = (CModel *) Calloc(1, sizeof(CModel));
   U64    prod = 1, *mult;
   U32    n;
@@ -29,11 +29,13 @@ double gamma, double eGamma){
   M->eGamma      = eGamma;
   M->pModelIdx   = 0;
   M->ref         = ref == 0 ? 0 : 1;
+  M->hashSize    = hSize;
 
   //if((ULL)(M->nPModels) * M->nSym * sizeof(ACC) >> 20 > MAX_ARRAY_MEMORY || tmp > UINT64_MAX){
   if(tmp * (double)M->nSym * (double)sizeof(ACC) / pow(2,20) > MAX_ARRAY_MEMORY || tmp >= UINT64_MAX){
+    printf("Creating hash for context: %d\n", ctx);
     M->mode = HASH_TABLE_MODE;
-    M->HT   = CreateHashTable(M->nSym);
+    M->HT   = CreateHashTable(M->nSym, hSize);
     }
   else{
     M->mode = ARRAY_MODE;

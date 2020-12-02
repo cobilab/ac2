@@ -67,6 +67,7 @@ void Decompress(Parameters *P, CModel **cModels, uint8_t id){
     P[id].model[k].den   = ReadNBits(       ALPHA_DEN_BITS, Reader);
     P[id].model[k].gamma = ReadNBits(           GAMMA_BITS, Reader) / 65534.0;
     P[id].model[k].edits = ReadNBits(           EDITS_BITS, Reader);
+    P[n].model[k].hashSize = ReadNBits(          HASH_BITS, Reader);
     if(P[id].model[k].edits != 0){
       P[id].model[k].eGamma = ReadNBits(      E_GAMMA_BITS, Reader) / 65534.0;
       P[id].model[k].eDen   = ReadNBits(        E_DEN_BITS, Reader);
@@ -106,7 +107,7 @@ void Decompress(Parameters *P, CModel **cModels, uint8_t id){
     if(P[id].model[n].type == TARGET)
       cModels[n] = CreateCModel(P[id].model[n].ctx , P[id].model[n].den,
       TARGET, P[id].model[n].edits, P[id].model[n].eDen, AL->cardinality,
-      P[id].model[n].gamma, P[id].model[n].eGamma);
+      P->model[n].hashSize, P[id].model[n].gamma, P[id].model[n].eGamma);
     }
 
   // GIVE SPECIFIC GAMMA:
@@ -354,8 +355,8 @@ CModel **LoadReference(Parameters *P){
   for(n = 0 ; n < P->nModels ; ++n)
     if(P->model[n].type == REFERENCE)
       cModels[n] = CreateCModel(P->model[n].ctx, P->model[n].den, REFERENCE,
-      P->model[n].edits, P->model[n].eDen, AL->cardinality, P->model[n].gamma,
-      P->model[n].eGamma);
+      P->model[n].edits, P->model[n].eDen, AL->cardinality, P->model[n].hashSize,
+      P->model[n].gamma, P->model[n].eGamma);
 
   nSymbols = NBytesInFile(Reader);
 
@@ -464,6 +465,7 @@ int32_t main(int argc, char *argv[]){
       P[n].model[k].den   = ReadNBits(   ALPHA_DEN_BITS, Reader);
       P[n].model[k].gamma = ReadNBits(       GAMMA_BITS, Reader) / 65534.0;
       P[n].model[k].edits = ReadNBits(       EDITS_BITS, Reader);
+      P[n].model[k].hashSize = ReadNBits(     HASH_BITS, Reader);
       if(P[n].model[k].edits != 0){
         P[n].model[k].eGamma = ReadNBits(  E_GAMMA_BITS, Reader) / 65534.0;
         P[n].model[k].eDen   = ReadNBits(    E_DEN_BITS, Reader);

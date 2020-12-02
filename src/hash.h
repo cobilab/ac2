@@ -20,15 +20,17 @@ ENTRY;
 typedef struct{
   uint32_t   size;           // Size of the hash table
   ENTMAX     *entrySize;     // Number of keys in this entry
+  ENTMAX     *index;         // Index to keys in this entry
   ENTRY      **entries;      // The heads of the hash table lists
   uint32_t   nSym;           // Number of symbols
+  uint8_t    maxC;
   }
 HASH;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 uint64_t     ZHASH               (uint64_t);
-HASH         *CreateHashTable    (uint32_t);
+HASH         *CreateHashTable    (uint32_t, uint32_t);
 void         InsertKey           (HASH *, uint32_t, uint64_t, uint32_t);
 HCC          GetHCCounters      (HASH *, uint64_t);
 void         UpdateHashCounter   (HASH *, uint32_t, uint64_t);

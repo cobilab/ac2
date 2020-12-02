@@ -18,25 +18,32 @@ uint64_t ZHASH(uint64_t z){
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-HASH *CreateHashTable(uint32_t nSym){
+HASH *CreateHashTable(uint32_t nSym, uint32_t c){
   HASH *H         = (HASH *) Calloc(1, sizeof(HASH));
   H->size         = HASH_SIZE;
   H->nSym         = nSym;
+  H->maxC         = c;
   H->entries      = (ENTRY  **) Calloc(H->size, sizeof(ENTRY *));
   H->entrySize    = (ENTMAX  *) Calloc(H->size, sizeof(ENTMAX));
+  H->index        = (ENTMAX  *) Calloc(H->size, sizeof(ENTMAX));
   return H;
   }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 void InsertKey(HASH *H, uint32_t hi, uint64_t key, uint32_t s){
-  H->entries[hi] = (ENTRY *) Realloc(H->entries[hi],
-                   (H->entrySize[hi] + 1) * sizeof(ENTRY), sizeof(ENTRY));
-  H->entries[hi][H->entrySize[hi]].key = key;
-  uint64_t i = 1;
-  H->entries[hi][H->entrySize[hi]].counters = (i<<(s<<1));
-  H->entrySize[hi]++;
+  if(H->entrySize[hi] == H->maxC) {
+    if(H->index[hi] == H->maxC)
+      H->index[hi] = 0;
+  } else {
+    H->entries[hi] = (ENTRY *) Realloc(H->entries[hi], (H->entrySize[hi] + 1) * sizeof(ENTRY), sizeof(ENTRY));
+    H->entrySize[hi]++;
   }
+  H->entries[hi][H->index[hi]].key = key;
+  uint64_t i = 1;
+  H->entries[hi][H->index[hi]].counters = (i<<(s<<1));
+  H->index[hi]++;
+}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
