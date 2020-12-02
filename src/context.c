@@ -78,17 +78,18 @@ uint64_t GetPModelIdxCorr(U8 *p, CModel *M, uint64_t idx){
 void ComputePModel(CModel *M, PModel *P, uint64_t idx, uint32_t aDen, long *freqs, long *sum){
   ACC *ac;
   HCC hc;
-  uint32_t x;
+  uint32_t x, c;
   switch(M->mode){
     case HASH_TABLE_MODE:
       hc = GetHCCounters(M->HT, idx);
       P->sum = 0;
       sum[0] = 0;
       for(x = 0 ; x < M->nSym ; ++x){
-        P->freqs[x] = 1 + aDen * ((hc>>(x<<1))&0x03);
-	freqs[x] = 1 + ((hc>>(x<<1))&0x03);
+        c = ((hc>>(x<<1))&0x03);
+        P->freqs[x] = 1 + aDen * c;
         P->sum += P->freqs[x];
-	sum[0] += freqs[x];
+        freqs[x] = 1 + c;
+        sum[0] += freqs[x];
         }
     break;
 
@@ -98,9 +99,9 @@ void ComputePModel(CModel *M, PModel *P, uint64_t idx, uint32_t aDen, long *freq
       sum[0] = 0;
       for(x = 0 ; x < M->nSym ; ++x){
         P->freqs[x] = 1 + aDen * ac[x];
-	freqs[x] = 1 + ac[x];
         P->sum += P->freqs[x];
-	sum[0] += freqs[x];
+        freqs[x] = 1 + ac[x];
+        sum[0] += freqs[x];
         }
     break;
 
