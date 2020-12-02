@@ -67,7 +67,7 @@ void Decompress(Parameters *P, CModel **cModels, uint8_t id){
     P[id].model[k].den   = ReadNBits(       ALPHA_DEN_BITS, Reader);
     P[id].model[k].gamma = ReadNBits(           GAMMA_BITS, Reader) / 65534.0;
     P[id].model[k].edits = ReadNBits(           EDITS_BITS, Reader);
-    P[n].model[k].hashSize = ReadNBits(          HASH_BITS, Reader);
+    P[id].model[k].hashSize = ReadNBits(          HASH_BITS, Reader);
     if(P[id].model[k].edits != 0){
       P[id].model[k].eGamma = ReadNBits(      E_GAMMA_BITS, Reader) / 65534.0;
       P[id].model[k].eDen   = ReadNBits(        E_DEN_BITS, Reader);
