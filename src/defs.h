@@ -73,7 +73,7 @@ Parameters;
 #define SYM_BITS               8
 #define N_MODELS_BITS          9
 #define CTX_BITS               5
-#define ALPHA_DEN_BITS         11
+#define ALPHA_DEN_BITS         16
 #define GAMMA_BITS             16
 #define EDITS_BITS             6
 #define E_GAMMA_BITS           16
