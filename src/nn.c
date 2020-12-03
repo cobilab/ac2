@@ -7,29 +7,37 @@
 
 ann_t* ann_init(uint64_t xs, uint64_t hs, uint64_t ys) {
   ann_t *ann = malloc(sizeof(ann_t));
-  ann->xs = xs;
-  ann->hs = hs;
-  ann->ys = ys;
+  ann->xs = ceilf((xs + 1.0f) / 8.0f) * 8.0f;
+  ann->hs = ceilf((float)hs / 8.0f) * 8.0f;
+  ann->ys = ceilf((float)ys / 8.0f) * 8.0f;
 
-  ann->x = calloc(xs, sizeof(float));
-  ann->h = calloc(hs, sizeof(float));
-  ann->y = calloc(ys, sizeof(float));
+  printf("xs:%ld hs:%ld ys:%ld\n", xs, hs, ys);
+  printf("axs:%ld ahs:%ld ays:%ld\n", ann->xs, ann->hs, ann->ys);
+
+  ann->x = calloc(ann->xs, sizeof(float));
+  ann->h = calloc(ann->hs, sizeof(float));
+  ann->y = calloc(ann->ys, sizeof(float));
+
+  int i;
+  for(i = xs; i < ann->xs; ++i) {
+    ann->x[i] = 1.0f;
+  }
   
-  ann->wxh = calloc(xs * hs, sizeof(float));
-  ann->why = calloc((hs+1) * ys, sizeof(float));
+  
+  ann->wxh = calloc(ann->xs * ann->hs, sizeof(float));
+  ann->why = calloc((hs+1) * ann->ys, sizeof(float));
 
   float r;
   float *w1 = ann->wxh;
   float *w2 = ann->why;
-  int i;
-  for(i = 0; i < xs * hs; ++i) {
+  for(i = 0; i < ann->xs * ann->hs; ++i) {
     r = (((float)rand() / RAND_MAX) * 2.0) - 1.0;
-    *w1++ = r * sqrtf(6.0 / (xs + hs));
+    *w1++ = r * sqrtf(6.0 / (ann->xs + ann->hs));
   }
 
-  for(i = 0; i < (hs + 1) * ys; ++i) {
+  for(i = 0; i < (ann->hs + 1) * ann->ys; ++i) {
     r = (((float)rand() / RAND_MAX) * 2.0) - 1.0;
-    *w2++ = r * sqrtf(6.0 / (ys + hs + 1));
+    *w2++ = r * sqrtf(6.0 / (ann->ys + ann->hs + 1));
   }
 
   return ann;
@@ -50,6 +58,8 @@ void ann_apply(ann_t *ann) {
   const uint32_t hs = ann->hs;
   const uint32_t ys = ann->ys;
 
+  if(xs%8!=0 || hs%8!=0 || ys%8!=0) __builtin_unreachable();
+  
   float *w1 = ann->wxh;
   for(i = 0; i < xs; ++i) {
     const float xi = ann->x[i];
@@ -82,18 +92,6 @@ void ann_apply(ann_t *ann) {
   for(i = 0; i < ys; ++i) {
     ann->y[i] /= total;
   }
-  
-  /*
-  float total = 0;
-  for(i = 0; i < ys; ++i) {
-    ann->y[i] = fasterexp(ann->y[i] + *w2++);
-    total += ann->y[i];
-  }
-  
-  for(i = 0; i < ys; ++i) {
-    ann->y[i] /= total;
-  }
-  */
 }
 
 void ann_train(ann_t *ann, float *t, float learning_rate) {
@@ -102,6 +100,8 @@ void ann_train(ann_t *ann, float *t, float learning_rate) {
   const uint32_t hs = ann->hs;
   const uint32_t ys = ann->ys;
 
+  if(xs%8!=0 || hs%8!=0 || ys%8!=0) __builtin_unreachable();
+  
   float d1[ys];
   for(i = 0; i < ys; ++i) {
     d1[i] = t[i] - ann->y[i];

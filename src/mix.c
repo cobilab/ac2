@@ -13,10 +13,7 @@ mix_state_t* mix_init(uint32_t nmodels, uint32_t nsymbols, uint32_t hs) {
   mxs->nsymbols = nsymbols;
   int sequence_derived = 4; // last 8, last 16, last 64 symbols
   int xs = (nmodels * nsymbols) + (sequence_derived * nsymbols);
-  xs++; //bias neuron
-  printf("xs: %d\n", xs);
   mxs->ann = ann_init(xs, hs, nsymbols);
-  mxs->ann->x[xs - 1]  = 1.0;
 
   // past symbols
   mxs->symlogs1 = 8; // empirically determined
@@ -74,13 +71,6 @@ float const* mix(mix_state_t* mxs, float **probs) {
     mxs->ann->x[k++] = mxs->avg[i];
   }
 
-  /*
-  float sum = 0;
-  for(i = 0; i < mxs->ann->xs - 1; ++i) {
-    sum += mxs->ann->x[i];
-  }
-  printf("%3g\n", sum / (mxs->ann->xs - 1));
-  */
   ann_apply(mxs->ann);
 
   return ret;
@@ -108,9 +98,9 @@ void calc_aggregates(mix_state_t* mxs, float **probs, uint8_t sym) {
 
 void mix_update_state(mix_state_t* mxs, float **probs, uint8_t sym, float learning_rate) {
   // Train NN
-  float tdata[mxs->nsymbols];
+  float tdata[mxs->ann->ys];
   int i;
-  for(i = 0 ; i < mxs->nsymbols; ++i) {
+  for(i = 0 ; i < mxs->ann->ys; ++i) {
     tdata[i] = 0.0;
   }
   tdata[sym] = 1.0;
