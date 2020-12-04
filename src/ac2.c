@@ -184,36 +184,7 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
       }
     }
   }
-  // pre train freqs not available in decompressor?
-  /*
-  uint64_t tcount = 0;
-  for(j = 0 ; j < ALPHABET_MAX_SIZE ; ++j) {
-    tcount += AL->counts[j];
-  }
-  float fr[alphabet_size];
-  i = 0;
-  for(j = 0 ; j < ALPHABET_MAX_SIZE ; ++j) {
-    if(AL->counts[j] > 0) {
-      fr[i] = (float)AL->counts[j] / tcount;
-      i++;
-    }
-  }
-  for(n = 0; n < nmodels; ++n) {
-    for(k = 0 ; k < alphabet_size ; ++k) {
-      probs[n][k] = 0;
-    }
-  }
 
-  float tdata[mxs->nsymbols];
-  for(j = 0 ; j < mxs->nsymbols; ++j) {
-    tdata[j] = fr[j];
-  }
-  
-  for(i = 0; i < 1000; ++i) {
-    mix(mxs, probs);
-    ann_train(mxs->ann, tdata, 1);
-  }
-  */
   i = 0;
   while((k = fread(readerBuffer, 1, BUFFER_SIZE, Reader)))
     for(idxPos = 0 ; idxPos < k ; ++idxPos){
@@ -266,11 +237,6 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
 	acmix[n] = PT->freqs[n];
       }
 
-      /*
-      if(i % 1000 == 0) {
-	printf("%ld, %f, %f, %f, %f\n", i, totalacbits - totalac2bits, totalacbits, totalac2bits, expacbits - expac2bits);
-      }
-      */
       if(expacbits > expac2bits) {
 	for(n = 0 ; n < alphabet_size ; ++n) {
 	  PT->freqs[n] = y[n];

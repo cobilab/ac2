@@ -36,9 +36,7 @@ if test -f "../../ds/$2"; then
    rm -f $2.co
    (/usr/bin/time -v ./AC2 -v $1 $2 ) &> ../../res/C_AC2_$2
    ls -la $2.co | awk '{ print $5;}' > ../../res/BC_AC2_$2
-   ./AD2 $2.co
-   diff -s $2 $2.de
-   #rm -f $2 $2.co;
+   rm -f $2 $2.co;
 fi
 }
 

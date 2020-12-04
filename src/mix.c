@@ -74,13 +74,6 @@ float const* mix(mix_state_t* mxs, float **probs) {
     mxs->ann->x[k++] = mxs->avg[i];
   }
 
-  /*
-  float sum = 0;
-  for(i = 0; i < mxs->ann->xs - 1; ++i) {
-    sum += mxs->ann->x[i];
-  }
-  printf("%3g\n", sum / (mxs->ann->xs - 1));
-  */
   ann_apply(mxs->ann);
 
   return ret;

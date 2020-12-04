@@ -154,36 +154,6 @@ void Decompress(Parameters *P, CModel **cModels, uint8_t id){
     }
   }
 
-  // pre train freqs not available in decompressor?
-  /*
-  uint64_t tcount = 0;
-  for(j = 0 ; j < ALPHABET_MAX_SIZE ; ++j) {
-    tcount += AL->counts[j];
-  }
-  float fr[alphabet_size];
-  i = 0;
-  for(j = 0 ; j < ALPHABET_MAX_SIZE ; ++j) {
-    if(AL->counts[j] > 0) {
-      fr[i] = (float)AL->counts[j] / tcount;
-      i++;
-    }
-  }
-  for(n = 0; n < nmodels; ++n) {
-    for(k = 0 ; k < alphabet_size ; ++k) {
-      probs[n][k] = 0;
-    }
-  }
-
-  float tdata[mxs->nsymbols];
-  for(j = 0 ; j < mxs->nsymbols; ++j) {
-    tdata[j] = fr[j];
-  }
-  
-  for(i = 0; i < 1000; ++i) {
-    mix(mxs, probs);
-    ann_train(mxs->ann, tdata, 1);
-  }
-  */
   i = 0;
   while(nSymbols--){
     CalcProgress(P[id].size, ++i);

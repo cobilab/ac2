@@ -82,18 +82,6 @@ void ann_apply(ann_t *ann) {
   for(i = 0; i < ys; ++i) {
     ann->y[i] /= total;
   }
-  
-  /*
-  float total = 0;
-  for(i = 0; i < ys; ++i) {
-    ann->y[i] = fasterexp(ann->y[i] + *w2++);
-    total += ann->y[i];
-  }
-  
-  for(i = 0; i < ys; ++i) {
-    ann->y[i] /= total;
-  }
-  */
 }
 
 void ann_train(ann_t *ann, float *t, float learning_rate) {
