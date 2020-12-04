@@ -13,10 +13,8 @@ mix_state_t* mix_init(uint32_t nmodels, uint32_t nsymbols, uint32_t hs) {
   mxs->nsymbols = nsymbols;
   int sequence_derived = 4; // last 8, last 16, last 64 symbols
   int xs = (nmodels * nsymbols) + (sequence_derived * nsymbols);
-  xs++; //bias neuron
-  printf("xs: %d\n", xs);
   mxs->ann = ann_init(xs, hs, nsymbols);
-  mxs->ann->x[xs - 1]  = 1.0;
+
 
   // past symbols
   mxs->symlogs1 = 8; // empirically determined
