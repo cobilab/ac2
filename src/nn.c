@@ -16,7 +16,7 @@ ann_t* ann_init(uint64_t xs, uint64_t hs, uint64_t ys) {
   ann->y = calloc(ann->ys, sizeof(float));
 
   ann->x[ann->xs - 1]  = 1.0;
-  ann->x[ann->hs - 1]  = 1.0;
+  ann->h[ann->hs - 1]  = 1.0;
   
   ann->wxh = calloc(ann->xs * ann->hs, sizeof(float));
   ann->why = calloc(ann->hs * ann->ys, sizeof(float));
@@ -88,12 +88,12 @@ void ann_apply(ann_t *ann) {
 }
 
 void ann_train(ann_t *ann, float *t, float learning_rate) {
-  int i, j;
   const uint32_t xs = ann->xs;
   const uint32_t hs = ann->hs;
   const uint32_t xhs = ann->hs - 1;
   const uint32_t ys = ann->ys;
 
+  int i, j;
   float d1[ys];
   for(i = 0; i < ys; ++i) {
     d1[i] = learning_rate * (t[i] - ann->y[i]);

@@ -170,7 +170,8 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
 
   
   // pre train
-  for(i = 0; i < 1000; ++i) {  
+  
+  for(i = 0; i < 50; ++i) {  
     for(j = 0 ; j < alphabet_size ; ++j) {
       for(n = 0; n < nmodels; ++n) {
 	probs[n][j] = 1.0;
