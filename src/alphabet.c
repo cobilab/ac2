@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "alphabet.h"
 #include "mem.h"
 #include "common.h"
@@ -102,8 +103,13 @@ void LoadAlphabet(ALPHABET *A, FILE *F){
 
   ResetAlphabet(A);
 
-  rewind(F);
+  if(A->cardinality > 32){
+    fprintf(stderr, "Error: maximum cardinality is 32!\n");
+    exit(1);
   }
+
+  rewind(F);
+}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // PRINT ALPHABET
