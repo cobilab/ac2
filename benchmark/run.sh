@@ -358,8 +358,8 @@ if [[ "$RUN_AC2" -eq "1" ]]; then
    RunAC2  "-l 7 -lr 0.02 -hs 80" "HS"
    RunAC2  "-l 7 -lr 0.02 -hs 80" "BT"
 
-   RunAC2  "-l 8 -lr 0.02 -hs 128" "GRCh38"
-   RunAC2  "-l 8 -lr 0.02 -hs 128" "pdbaa"
+   RunAC2  "-l 9 -lr 0.02 -hs 128" "GRCh38"
+   RunAC2  "-l 9 -lr 0.02 -hs 128" "pdbaa"
    RunAC2  "-l 8 -lr 0.02 -hs 128" "uniprot"
 
    #RunAC2  "-l 1 -lr 0.16 -hs 24" "EP"
