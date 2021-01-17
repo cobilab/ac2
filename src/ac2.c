@@ -23,7 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - - - - C O M P R E S S O R - - - - - - - - - - - - - -
 
-int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, INF *I, float lr, uint32_t hs){
+int Compress(ALPHABET *base_alphabet, Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, INF *I, float lr, uint32_t hs){
   FILE        *Reader  = Fopen(P->tar[id], "r");
   char        *name    = concatenate(P->tar[id], ".co");
   FILE        *Writter = Fopen(name, "w");
@@ -52,13 +52,13 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
   size = NBytesInFile(Reader);
 
   // BUILD ALPHABET
-  ALPHABET *AL = CreateAlphabet(P->low);
+  ALPHABET *AL = CreateFromAlphabet(base_alphabet);
   LoadAlphabet(AL, Reader);
   if(P->verbose)
     PrintAlphabet(AL);
 
   // ADAPT ALPHABET FOR NON FREQUENT SYMBOLS
-  AdaptAlphabetNonFrequent(AL, Reader);
+  AdaptAlphabetNonFrequent(AL);
 
   // EXTRA MODELS DERIVED FROM EDITS
   totModels = P->nModels;
@@ -67,7 +67,7 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
       totModels++;
       }
 
-  fprintf(stderr, "Using %u probabilistic models\n", totModels);
+  //fprintf(stderr, "Using %u probabilistic models\n", totModels);
 
   pModel        = (PModel  **) Calloc(totModels, sizeof(PModel *));
   for(n = 0 ; n < totModels ; ++n)
@@ -345,7 +345,7 @@ int Compress(Parameters *P, CModel **cModels, uint8_t id, uint32_t refNModels, I
 //////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - - - - - - R E F E R E N C E - - - - - - - - - - - - -
 
-CModel **LoadReference(Parameters *P){
+CModel **LoadReference(ALPHABET *base_alphabet, Parameters *P){
   FILE      *Reader = Fopen(P->ref, "r");
   uint32_t  n, k, idxPos;
   uint64_t  nSymbols = 0;
@@ -361,9 +361,10 @@ CModel **LoadReference(Parameters *P){
     fprintf(stdout, "Building reference model ...\n");
 
   // BUILD ALPHABET
-  ALPHABET *AL = CreateAlphabet(P->low);
+  ALPHABET *AL = CreateFromAlphabet(base_alphabet);
   LoadAlphabet(AL, Reader);
-  PrintAlphabet(AL);
+  if(P->verbose)
+    PrintAlphabet(AL);
 
   readerBuffer  = (uint8_t *) Calloc(BUFFER_SIZE + 1, sizeof(uint8_t));
   cModels       = (CModel **) Malloc(P->nModels * sizeof(CModel *));
@@ -505,18 +506,32 @@ int32_t main(int argc, char *argv[]){
   P->ref      = ArgsString (NULL, p, argc, "-r");
   P->nTar     = ReadFNames (P, argv[argc-1]);
   P->checksum = 0;
+  
+  
+  ALPHABET  *base_alphabet = CreateAlphabet(P->low);
+  
   if(P->verbose)
     PrintArgs(P);
 
   if(refNModels == 0)
     refModels = (CModel **) Malloc(P->nModels * sizeof(CModel *));
   else{
+  	FILE      *Reader = Fopen(P->ref, "r");
+    AddSymbolsAlphabet(base_alphabet, Reader);
+    fclose(Reader);
+    
+    for(n = 0 ; n < P->nTar ; ++n){
+      Reader = Fopen(P->tar[n], "r");
+	  AddSymbolsAlphabet(base_alphabet, Reader);
+	  fclose(Reader);
+    }
+      
     if(P->ref == NULL){
       fprintf(stderr, "Error: using reference model(s) in nonexistent "
       "reference sequence!\n");
       exit(1);
       }
-    refModels = LoadReference(P);
+    refModels = LoadReference(base_alphabet, P);
     if(P->verbose)
       fprintf(stderr, "Checksum: %"PRIu64"\n", P->checksum);
     }
@@ -529,7 +544,7 @@ int32_t main(int argc, char *argv[]){
   headerBytes = 0;
   cardinality = 1;
   for(n = 0 ; n < P->nTar ; ++n){
-    cardinality  = Compress(P, refModels, n, refNModels, I, lr, hs);
+    cardinality  = Compress(base_alphabet, P, refModels, n, refNModels, I, lr, hs);
     totalSize   += I[n].size;
     totalBytes  += I[n].bytes;
     headerBytes += I[n].header;

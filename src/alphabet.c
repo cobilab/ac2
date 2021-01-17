@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "alphabet.h"
 #include "mem.h"
 #include "common.h"
@@ -50,6 +51,27 @@ ALPHABET *CreateAlphabet(uint32_t low){
   A->nLow            = 0;
   A->length          = 0;
   A->cardinality     = 0;
+  return A;
+  }
+  
+ALPHABET *CreateFromAlphabet(ALPHABET *base){
+  ALPHABET *A        = (ALPHABET *) Calloc(1,                 sizeof(ALPHABET));
+  A->numeric         = (uint8_t  *) Calloc(ALPHABET_MAX_SIZE, sizeof(uint8_t));
+  A->toChars         = (uint8_t  *) Calloc(ALPHABET_MAX_SIZE, sizeof(uint8_t));
+  A->revMap          = (uint8_t  *) Calloc(ALPHABET_MAX_SIZE, sizeof(uint8_t));
+  A->alphabet        = (uint8_t  *) Calloc(ALPHABET_MAX_SIZE, sizeof(uint8_t));
+  A->mask            = (uint8_t  *) Calloc(ALPHABET_MAX_SIZE, sizeof(uint8_t));
+  A->lowAlpha        = (uint8_t  *) Calloc(ALPHABET_MAX_SIZE, sizeof(uint8_t));
+  A->counts          = (uint64_t *) Calloc(ALPHABET_MAX_SIZE, sizeof(uint64_t));
+  A->low             = base->low;
+  A->nLow            = base->nLow;
+  A->length          = 0;
+  A->cardinality     = base->cardinality;
+  
+  memcpy(A->toChars, base->toChars, ALPHABET_MAX_SIZE * sizeof(uint8_t));
+  memcpy(A->revMap, base->revMap, ALPHABET_MAX_SIZE * sizeof(uint8_t));
+  memcpy(A->alphabet, base->alphabet, ALPHABET_MAX_SIZE * sizeof(uint8_t));
+  memcpy(A->mask, base->mask, ALPHABET_MAX_SIZE * sizeof(uint8_t));
   return A;
   }
 
@@ -103,8 +125,30 @@ void LoadAlphabet(ALPHABET *A, FILE *F){
 
   ResetAlphabet(A);
 
-  if(A->cardinality > 32){
-    fprintf(stderr, "Error: maximum cardinality is 32!\n");
+  if(A->cardinality > MAX_CARDINALITY){
+    fprintf(stderr, "Error: maximum cardinality is %d!\n", MAX_CARDINALITY);
+    exit(1);
+  }
+
+  rewind(F);
+}
+
+void AddSymbolsAlphabet(ALPHABET *A, FILE *F){
+  uint32_t x;
+  int32_t  k;
+  uint8_t  *buffer;
+
+  buffer = (uint8_t *) Calloc(BUFFER_SIZE, sizeof(uint8_t));
+  while((k = fread(buffer, 1, BUFFER_SIZE, F)))
+    for(x = 0 ; x < k ; ++x){
+      A->mask[buffer[x]] = 1;
+      }
+  Free(buffer);
+
+  ResetAlphabet(A);
+
+  if(A->cardinality > MAX_CARDINALITY){
+    fprintf(stderr, "Error: maximum cardinality is %d!\n", MAX_CARDINALITY);
     exit(1);
   }
 
@@ -127,7 +171,7 @@ void PrintAlphabet(ALPHABET *A){
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // ADAPT ALPHABET
 //
-void AdaptAlphabetNonFrequent(ALPHABET *A, FILE *F){
+void AdaptAlphabetNonFrequent(ALPHABET *A){
   uint32_t x;
 
   for(x = 0 ; x < A->cardinality ; ++x){
@@ -138,12 +182,12 @@ void AdaptAlphabetNonFrequent(ALPHABET *A, FILE *F){
       }
     }
 
-  fprintf(stderr, "Low symbols numb : %u\n", A->nLow);
-  fprintf(stderr, "Low frequent sym : \n");
+  //fprintf(stderr, "Low symbols numb : %u\n", A->nLow);
+  //fprintf(stderr, "Low frequent sym : \n");
   for(x = 0 ; x < A->cardinality ; ++x){
     int id = (int) A->toChars[x];
     if(A->mask[id] == 2){
-      PrintID(A, id);
+      //PrintID(A, id);
       }
     }
   }

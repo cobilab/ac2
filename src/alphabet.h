@@ -5,6 +5,7 @@
 
 #define ALPHABET_MAX_SIZE 256
 #define INVALID_SYMBOL    255
+#define MAX_CARDINALITY   32
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -27,11 +28,13 @@ ALPHABET;
 
 double     PrintSE                    (ALPHABET *);
 ALPHABET   *CreateAlphabet            (uint32_t);
+ALPHABET   *CreateFromAlphabet        (ALPHABET *);
 void       ResetAlphabet              (ALPHABET *);
 void       LoadAlphabet               (ALPHABET *, FILE *);
+void       AddSymbolsAlphabet         (ALPHABET *, FILE *);
 void       PrintAlphabet              (ALPHABET *);
 int        IsLowChar                  (ALPHABET *, uint8_t);
-void       AdaptAlphabetNonFrequent   (ALPHABET *, FILE *);
+void       AdaptAlphabetNonFrequent   (ALPHABET *);
 void       RemoveAlphabet             (ALPHABET *);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
