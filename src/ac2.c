@@ -40,11 +40,18 @@ int Compress(ALPHABET *base_alphabet, Parameters *P, CModel **cModels, uint8_t i
     fprintf(stderr, "Analyzing data and creating models ...\n");
 
   #ifdef ESTIMATE
-  FILE *IAE = NULL;
-  char *IAEName = NULL;
+  FILE *IAE_AC = NULL;
+  char *IAEName_AC = NULL;
   if(P->estim == 1){
-    IAEName = concatenate(P->tar[id], ".iae");
-    IAE = Fopen(IAEName, "w");
+    IAEName_AC = concatenate(P->tar[id], ".iae_AC");
+    IAE_AC = Fopen(IAEName_AC, "w");
+    }
+
+  FILE *IAE_AC2 = NULL;
+  char *IAEName_AC2 = NULL;
+  if(P->estim == 1){
+    IAEName_AC2 = concatenate(P->tar[id], ".iae_AC2");
+    IAE_AC2 = Fopen(IAEName_AC2, "w");
     }
   #endif
 
@@ -262,8 +269,10 @@ int Compress(ALPHABET *base_alphabet, Parameters *P, CModel **cModels, uint8_t i
 
       AESym(sym, (int *)(MX->freqs), (int) MX->sum, Writter);
       #ifdef ESTIMATE
-      if(P->estim != 0)
-        fprintf(IAE, "%.3g\n", PModelSymbolNats(MX, sym) / M_LN2);
+      if(P->estim != 0) {
+        fprintf(IAE_AC, "%.3g\n", acbits);
+        fprintf(IAE_AC2, "%.3g\n", -log2(PT->freqs[sym]));
+      }
       #endif
 
       CalcDecayment(WM, pModel, sym);
@@ -292,8 +301,10 @@ int Compress(ALPHABET *base_alphabet, Parameters *P, CModel **cModels, uint8_t i
 
   #ifdef ESTIMATE
   if(P->estim == 1){
-    fclose(IAE);
-    Free(IAEName);
+    fclose(IAE_AC);
+    Free(IAEName_AC);
+    fclose(IAE_AC2);
+    Free(IAEName_AC2);
     }
   #endif
 
