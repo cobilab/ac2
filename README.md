@@ -58,3 +58,9 @@ Every time a new symbol is seen the mixing is done with `const float* y = mix(mx
 Training must be done after invoking the mixing with `mix_update_state(mxs, probs, sym, lr);`. Where `sym` is the actual symbol seen encoded as an int [0, ALPHABET_SIZE[ and`lr`is the learning rate.
 
 Finally, the mixer can be freed with `mix_free(mxs);`
+
+Citation
+----
+If you use AC2, please cite:
+* Milton Silva, Diogo Pratas, Armando J Pinho, **"AC2: An Efficient Protein Sequence Compression Tool Using Artificial Neural Networks and Cache-Hash Models"**, Entropy, Volume 23, Issue 5, 2021, https://doi.org/10.3390/e23050530
+
